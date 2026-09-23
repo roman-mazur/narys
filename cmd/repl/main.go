@@ -32,22 +32,27 @@ func main() {
 		if input == "" {
 			continue
 		}
-
-		parts := strings.Fields(input)
-		cmd := parts[0]
-		count := 1
-
-		// Parse loop if a number is provided (e.g., "down 5")
-		if len(parts) > 1 {
-			if n, err := strconv.Atoi(parts[1]); err == nil {
-				count = n
+		for cmdInput := range strings.SplitSeq(input, ";") {
+			parts := strings.Fields(cmdInput)
+			if len(parts) == 0 {
+				continue
 			}
-		}
+			cmd := parts[0]
+			count := 1
 
-		// Send commands with a delay for visual "stepping"
-		for i := 0; i < count; i++ {
-			fmt.Fprintf(conn, "%s\n", cmd)
-			time.Sleep(500 * time.Millisecond) // Half-second delay
+			// Parse loop if a number is provided (e.g., "down 5")
+			if len(parts) > 1 {
+				if n, err := strconv.Atoi(parts[1]); err == nil {
+					count = n
+				}
+			}
+
+			// Send commands with a delay for visual "stepping"
+			for i := 0; i < count; i++ {
+				fmt.Fprintf(conn, "%s\n", cmd)
+				time.Sleep(500 * time.Millisecond) // Half-second delay
+			}
+
 		}
 	}
 }
